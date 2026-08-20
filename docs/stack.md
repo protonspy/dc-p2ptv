@@ -11,6 +11,7 @@ Acrescentar dependência são dois atos: acrescentar, e dizer aqui por quê.
 
 - **Go** — o nó precisa manter milhares de conexões simultâneas com latência previsível, e o modelo de goroutine mais o coletor de baixa pausa entregam isso sem o autor escrever laço de evento.
 - **Pion** — pilha WebRTC em Go puro, sem `cgo` e sem `libwebrtc`, com acesso ao pacote RTP em vez de uma sessão opaca. É o que permite o nó encaminhar mídia que não consegue abrir.
+- **pion/turn** — o serviço TURN é do próprio nó, e não de terceiro: a credencial é efêmera e derivada do segredo compartilhado, de modo que o plano de controle a emite sem falar com o plano de dados. TURN é rede de segurança e custo, nunca caminho de dados, e a fração de sessões que passa por ele é métrica de alarme.
 - **biblioteca padrão de HTTP** — o roteamento por método e padrão que o Go traz desde a 1.22 cobre a API REST de sala. Framework é decisão a tomar quando doer, não antes.
 
 ## Cliente

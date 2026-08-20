@@ -6,6 +6,7 @@ package cli
 import (
 	"fmt"
 	"io"
+	"os"
 
 	"github.com/protonspy/dc-p2ptv/server/internal/version"
 )
@@ -18,10 +19,14 @@ const (
 	Misused = 2
 )
 
-// Run writes what this build is to stdout and reports the status the process
-// should exit with. Anything it cannot do is reported on stderr.
+// Run dispatches the subcommand and reports the status the process should exit
+// with. With no subcommand it writes what this build is to stdout. Anything it
+// cannot do is reported on stderr.
 func Run(stdout, stderr io.Writer, args []string) int {
 	if len(args) > 0 {
+		if args[0] == "turn" {
+			return runTURN(stdout, stderr, args[1:], os.Getenv, waitForSignal)
+		}
 		// Nothing useful remains if reporting the misuse also fails.
 		_, _ = fmt.Fprintf(stderr, "node: unexpected argument %q\n", args[0])
 		return Misused

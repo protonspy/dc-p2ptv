@@ -58,8 +58,9 @@ The reasoning behind each of these is in [`docs/adr/`](docs/adr/).
 
 Early. The plan and the decisions are written; the protocol is not implemented yet.
 
-What exists today is the repository skeleton, the vocabulary, the adopted stack and four
-architecture decision records. Progress is tracked in
+What exists today is the repository skeleton, the vocabulary, the adopted stack, four
+architecture decision records, the node's TURN service, and the switch that closes the
+network to your own nodes. Progress is tracked in
 [`plans/sala-tempo-real.md`](plans/sala-tempo-real.md).
 
 ## Layout
@@ -84,6 +85,27 @@ cd client && npm install && npm test
 
 Linters, formatters and the per-package test commands are listed in
 [`.claude/rules/project.md`](.claude/rules/project.md).
+
+## Running the TURN service
+
+TURN is the safety net for the sessions ICE cannot connect directly. It is cost, never a
+data path, so the node reports on the way out what share of the sessions fell back to it.
+
+```bash
+export NODE_TURN_SECRET="the shared secret"   # never a flag: a flag lands in the process table
+cd server && go run ./cmd/node turn -relay-address 203.0.113.7
+```
+
+| Key | Meaning |
+| --- | --- |
+| `NODE_TURN_SECRET` | the secret the ephemeral credentials are derived from, and verified against |
+| `NODE_FEDERATION` | `open` (default) or `closed` — `closed` restricts the network to your own nodes, without a release |
+| `NODE_OWN_NODES` | comma-separated node identities that count as your own when the network is closed |
+
+Flags: `-listen` (default `:3478`), `-realm`, `-relay-address` (the public IP clients are
+told to relay through), `-credential-ttl`, and `-allow-private-peers` — off by default,
+because a relay that carries traffic to a loopback or private address is a way into the
+network the node runs on. A demonstration on one machine is what turns it on.
 
 ## Documentation
 
