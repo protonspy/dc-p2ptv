@@ -16,6 +16,10 @@ cd client && npm run build
 cd server && go test ./...
 cd client && npm test
 
+# Test — with the coverage gate the pull request has to clear (86%)
+cd server && go test -race -covermode=atomic -coverpkg=./... -coverprofile=coverage.out ./... && go tool cover -func=coverage.out | tail -1
+cd client && npm run test:coverage
+
 # Test — one package or one file (used after every task; scope, not suite)
 cd server && go test ./internal/<package>/...
 cd client && npx vitest run src/<file>.test.ts

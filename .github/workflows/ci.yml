@@ -46,8 +46,17 @@ jobs:
       - name: Vet
         run: go vet ./...
 
-      - name: Test
-        run: go test -race ./...
+      - name: Test and coverage gate
+        run: |
+          go test -race -covermode=atomic -coverpkg=./... -coverprofile=coverage.out ./...
+          go tool cover -func=coverage.out | tail -1
+          total=$(go tool cover -func=coverage.out | awk '/^total:/ {print $3}' | tr -d '%')
+          awk -v t="$total" 'BEGIN {
+            if (t + 0 < 86) { printf "coverage %s%% is below the 86%% gate
+", t; exit 1 }
+            printf "coverage %s%% clears the 86%% gate
+", t
+          }'
 
       - name: Lint
         uses: golangci/golangci-lint-action@v9
@@ -76,8 +85,8 @@ jobs:
       - name: Typecheck
         run: ./node_modules/.bin/tsc --noEmit
 
-      - name: Test
-        run: ./node_modules/.bin/vitest run
+      - name: Test and coverage gate
+        run: ./node_modules/.bin/vitest run --coverage
 
       - name: Lint
         run: ./node_modules/.bin/eslint src
