@@ -17,6 +17,9 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  COVERAGE_FLOOR: 86
+
 jobs:
   server:
     name: server (Go)
@@ -51,12 +54,11 @@ jobs:
           go test -race -covermode=atomic -coverpkg=./... -coverprofile=coverage.out ./...
           go tool cover -func=coverage.out | tail -1
           total=$(go tool cover -func=coverage.out | awk '/^total:/ {print $3}' | tr -d '%')
-          awk -v t="$total" 'BEGIN {
-            if (t + 0 < 86) { printf "coverage %s%% is below the 86%% gate
-", t; exit 1 }
-            printf "coverage %s%% clears the 86%% gate
-", t
-          }'
+          echo "coverage ${total}%, floor ${COVERAGE_FLOOR}%"
+          awk -v t="$total" -v f="$COVERAGE_FLOOR" 'BEGIN { exit (t + 0 >= f + 0) ? 0 : 1 }' || {
+            echo "::error::server coverage ${total}% is below the ${COVERAGE_FLOOR}% floor"
+            exit 1
+          }
 
       - name: Lint
         uses: golangci/golangci-lint-action@v9
@@ -85,6 +87,8 @@ jobs:
       - name: Typecheck
         run: ./node_modules/.bin/tsc --noEmit
 
+      # The floor lives in vite.config.ts, so a local run fails for the same
+      # reason this one does.
       - name: Test and coverage gate
         run: ./node_modules/.bin/vitest run --coverage
 
