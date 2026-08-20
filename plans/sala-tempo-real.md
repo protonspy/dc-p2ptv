@@ -2,7 +2,7 @@
 autonomy: auto
 ci: wait
 status: approved
-checksum: f6358e17fe54a124d0df9b0ca77ee9e0679675f27f72256096af2d3d746d97c6
+checksum: a764963cac00eda14abc3b60a51c0c69d7b897664ff0b1f753d92240a5f43e92
 ---
 
 # Sala em tempo real
@@ -89,6 +89,12 @@ passagem em nenhum momento consegue decodificar um quadro.
 - [x] 1.10 (Unit) Registrar em ADR o transporte por faixas de mídia WebRTC, contra o
       WebCodecs sobre WebSocket que o projeto antecessor mede em 40 ms
   _Reason há alternativa em produção com número medido, e a escolha decide o cliente inteiro_
+- [x] 1.11 (Unit) Prover integração contínua que rode construção, teste, lint e `scc
+      validate` a cada pull request
+  _Reason os comandos existiam e nada os rodava na abertura de uma pull request_
+- [x] 1.12 (Unit) Exigir cobertura de teste igual ou acima de 86% nos dois projetos, e
+      proteger `main` para que a mesclagem dependa dos checks
+  _Reason pedido depois da aprovação: a integração contínua tinha de bloquear a mesclagem, não apenas relatar_
 
 ## Done when
 

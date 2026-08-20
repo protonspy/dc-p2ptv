@@ -1,0 +1,115 @@
+name: CI
+
+# Triggered by push rather than by pull_request. The pull_request event needs a
+# merge ref, and GitHub has been reporting mergeable=null for this repository's
+# pull requests, so no workflow was ever dispatched for them. Push covers the
+# flow this project uses — a branch per unit of work, pull requests from the
+# same repository. A pull request from a fork would not be covered, and this
+# goes back to pull_request the day one arrives.
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  COVERAGE_FLOOR: 86
+
+jobs:
+  server:
+    name: server (Go)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: server
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: server/go.mod
+
+      - name: Format
+        run: |
+          unformatted=$(gofmt -l .)
+          if [ -n "$unformatted" ]; then
+            echo "gofmt would rewrite:"
+            echo "$unformatted"
+            exit 1
+          fi
+
+      - name: Build
+        run: go build ./...
+
+      - name: Vet
+        run: go vet ./...
+
+      - name: Test and coverage gate
+        run: |
+          go test -race -covermode=atomic -coverpkg=./... -coverprofile=coverage.out ./...
+          go tool cover -func=coverage.out | tail -1
+          total=$(go tool cover -func=coverage.out | awk '/^total:/ {print $3}' | tr -d '%')
+          echo "coverage ${total}%, floor ${COVERAGE_FLOOR}%"
+          awk -v t="$total" -v f="$COVERAGE_FLOOR" 'BEGIN { exit (t + 0 >= f + 0) ? 0 : 1 }' || {
+            echo "::error::server coverage ${total}% is below the ${COVERAGE_FLOOR}% floor"
+            exit 1
+          }
+
+      - name: Lint
+        uses: golangci/golangci-lint-action@v9
+        with:
+          version: v2.13.0
+          working-directory: server
+
+  client:
+    name: client (TypeScript)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: client
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: client/package-lock.json
+
+      - name: Install
+        run: npm ci
+
+      - name: Typecheck
+        run: ./node_modules/.bin/tsc --noEmit
+
+      # The floor lives in vite.config.ts, so a local run fails for the same
+      # reason this one does.
+      - name: Test and coverage gate
+        run: ./node_modules/.bin/vitest run --coverage
+
+      - name: Lint
+        run: ./node_modules/.bin/eslint src
+
+      - name: Format
+        run: ./node_modules/.bin/prettier --check src
+
+      - name: Build
+        run: ./node_modules/.bin/vite build
+
+  artifacts:
+    name: artifacts (scc)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      - name: Validate specs, plans and docs
+        run: npx --yes @protonspy/scc@0.15.0 validate

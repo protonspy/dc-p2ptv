@@ -21,6 +21,7 @@ Acrescentar dependência são dois atos: acrescentar, e dizer aqui por quê.
 ## Desenvolvimento
 
 - **Vitest** — roda os testes do cliente com a mesma configuração do Vite, sem um segundo pipeline de transformação para manter.
+- **@vitest/coverage-v8** — mede a cobertura pelo instrumentador que o próprio motor já traz, e carrega o limiar de 86% na configuração do teste, de modo que uma execução local falhe pela mesma razão que a integração contínua.
 - **jsdom** — dá ao teste o `DOM` que o código de sala assume, sem subir navegador para verificar uma função.
 - **ESLint** com **typescript-eslint** — a camada que encontra o que o compilador não encontra: promessa solta, variável não usada, retorno ignorado.
 - **Prettier** — formatação decidida por ferramenta, para que revisão discuta o que a mudança faz.

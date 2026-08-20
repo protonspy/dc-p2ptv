@@ -2,11 +2,9 @@
 package main
 
 import (
-	"fmt"
+	"os"
 
-	"github.com/protonspy/dc-p2ptv/server/internal/version"
+	"github.com/protonspy/dc-p2ptv/server/internal/cli"
 )
 
-func main() {
-	fmt.Println(version.Describe("node"))
-}
+func main() { os.Exit(cli.Run(os.Stdout, os.Stderr, os.Args[1:])) }

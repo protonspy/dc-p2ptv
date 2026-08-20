@@ -38,3 +38,5 @@ go.work.sum
 node_modules/
 dist/
 *.tsbuildinfo
+coverage.out
+coverage/
