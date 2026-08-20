@@ -1,26 +1,27 @@
 # Stack
 
-Every adopted technology, with one line on why it earned its place. **Technology
-that is not listed here is an open decision, never something adopted silently** —
-and because this project's dependency file is structured data rather than source,
-that rule is checkable: a direct dependency declared there and absent from here is
-reported.
+Cada tecnologia adotada, com a linha que diz por que ela entrou. **Tecnologia que não
+está aqui é decisão em aberto, nunca algo adotado em silêncio** — e como os manifestos
+são dados estruturados, isso é verificável: dependência direta declarada lá e ausente
+daqui é apontada.
 
-So adding a dependency is a two-step act: add it, and say here why.
+Acrescentar dependência são dois atos: acrescentar, e dizer aqui por quê.
 
-```markdown
-## Runtime
+## Servidor
 
-- **the-http-router** — routing with the standard library's handler contract, no
-  framework underneath it.
+- **Go** — o nó precisa manter milhares de conexões simultâneas com latência previsível, e o modelo de goroutine mais o coletor de baixa pausa entregam isso sem o autor escrever laço de evento.
+- **Pion** — pilha WebRTC em Go puro, sem `cgo` e sem `libwebrtc`, com acesso ao pacote RTP em vez de uma sessão opaca. É o que permite o nó encaminhar mídia que não consegue abrir.
+- **biblioteca padrão de HTTP** — o roteamento por método e padrão que o Go traz desde a 1.22 cobre a API REST de sala. Framework é decisão a tomar quando doer, não antes.
 
-## Development
+## Cliente
 
-- **the-test-runner** — what CI runs; the suite is the gate for a feature.
-```
+- **TypeScript** — o protocolo tem estados com transição rígida — malha, rede, promoção — e tipo discriminado é o que impede um cliente de mandar mensagem que o servidor não espera.
+- **Vite** — empacota a biblioteca e serve o protótipo com recarga rápida, sem configuração para um projeto desta forma.
 
-Group however the project actually thinks about it. What matters is that the name
-appears and the reason is one line a reader can disagree with.
+## Desenvolvimento
 
-<!-- Entries go below this line. Delete the guidance above once they read for
-themselves. -->
+- **Vitest** — roda os testes do cliente com a mesma configuração do Vite, sem um segundo pipeline de transformação para manter.
+- **jsdom** — dá ao teste o `DOM` que o código de sala assume, sem subir navegador para verificar uma função.
+- **ESLint** com **typescript-eslint** — a camada que encontra o que o compilador não encontra: promessa solta, variável não usada, retorno ignorado.
+- **Prettier** — formatação decidida por ferramenta, para que revisão discuta o que a mudança faz.
+- **golangci-lint** — o mesmo papel no lado Go, com `errcheck` e `nilerr`: erro não verificado é defeito que teste não encontra.
