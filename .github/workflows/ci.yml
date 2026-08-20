@@ -1,9 +1,13 @@
 name: CI
 
+# Triggered by push rather than by pull_request. The pull_request event needs a
+# merge ref, and GitHub has been reporting mergeable=null for this repository's
+# pull requests, so no workflow was ever dispatched for them. Push covers the
+# flow this project uses — a branch per unit of work, pull requests from the
+# same repository. A pull request from a fork would not be covered, and this
+# goes back to pull_request the day one arrives.
 on:
   push:
-    branches: [main]
-  pull_request:
   workflow_dispatch:
 
 permissions:
