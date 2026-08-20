@@ -2,7 +2,7 @@
 autonomy: auto
 ci: wait
 status: approved
-checksum: ac9e1e5264407cdfb54a5ca150fffc931110bedd230a2124a66add49b87a56c3
+checksum: a764963cac00eda14abc3b60a51c0c69d7b897664ff0b1f753d92240a5f43e92
 ---
 
 # Sala em tempo real
@@ -92,6 +92,9 @@ passagem em nenhum momento consegue decodificar um quadro.
 - [x] 1.11 (Unit) Prover integração contínua que rode construção, teste, lint e `scc
       validate` a cada pull request
   _Reason os comandos existiam e nada os rodava na abertura de uma pull request_
+- [x] 1.12 (Unit) Exigir cobertura de teste igual ou acima de 86% nos dois projetos, e
+      proteger `main` para que a mesclagem dependa dos checks
+  _Reason pedido depois da aprovação: a integração contínua tinha de bloquear a mesclagem, não apenas relatar_
 
 ## Done when
 
