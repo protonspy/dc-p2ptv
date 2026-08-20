@@ -2,7 +2,7 @@
 autonomy: auto
 ci: wait
 status: approved
-checksum: a764963cac00eda14abc3b60a51c0c69d7b897664ff0b1f753d92240a5f43e92
+checksum: 9eb3f0a8b3bb8e8cab27d21bc6385350ed776b2896c758557db6f72c0f431f85
 ---
 
 # Sala em tempo real
@@ -72,9 +72,9 @@ passagem em nenhum momento consegue decodificar um quadro.
 - [x] 1.4 (Unit) Registrar em ADR a separação entre plano de controle e plano de dados, e o que um nó de passagem nunca decide
 - [x] 1.5 (Unit) Registrar em ADR a afinidade da sala por hash consistente e o teto de nós por sala, com o que cada um assume do outro
 - [x] 1.6 (Unit) Registrar em ADR o modelo de confiança da cifra: chave do nó dono, opacidade para os nós de passagem, e o que o dono da comunidade consegue ver
-- [ ] 1.7 (Unit) Subir o serviço TURN sobre `pion/turn` com credenciais efêmeras, e instrumentar a fração de sessões que o usa
+- [x] 1.7 (Unit) Subir o serviço TURN sobre `pion/turn` com credenciais efêmeras, e instrumentar a fração de sessões que o usa
   _Depends 1.1_
-- [ ] 1.8 (Unit) Prover a chave de configuração que restringe a rede a nós próprios, para desligar a federação sem soltar versão
+- [x] 1.8 (Unit) Prover a chave de configuração que restringe a rede a nós próprios, para desligar a federação sem soltar versão
 - [ ] 2.1 (Unit) Montar o ambiente de demonstração com três nós, uma sala de oito participantes e dezenas de espectadores
   _Depends 1.7_
 - [ ] 2.2 (TDD) Medir latência vidro a vidro, tempo até o primeiro quadro e travamento, na malha e na rede, e comparar contra o piso sem promoção
